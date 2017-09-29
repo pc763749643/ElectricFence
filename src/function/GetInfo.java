@@ -1,4 +1,4 @@
-package lg0v0;
+package function;
 
 import java.io.IOException;
 import com.google.gson.Gson;
@@ -17,53 +17,52 @@ public class GetInfo {
 	String url="http://capi.gpslink.cn";
 	
 	//验证Token是否有效
-	public int getResponseCode(String Authorization) {
-		Request request = new Request.Builder()
-			      .url(url+"/api/Users")
-			      .header("Accept", "application/json")
-			      .header("Authorization", Authorization)
-			      .build();
-		try {
-			Response response = client.newCall(request).execute();
-			return response.code();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return 0;
-	}
-	
-	//获取Token的函数，返回Token的字符串
-	public String getToken(String username,String password,String grant_type,String scope) {
-		SaveToken savetoken = new SaveToken();
-		if(this.getResponseCode(savetoken.readString())==200) {
-			return savetoken.readString();
-		}else {
-			String str="";
-			final Gson gson = new Gson();
-			 RequestBody body = new FormBody.Builder()
-															.add("username", username)
-															.add("password", password)
-															.add("grant_type", grant_type)
-															.add("scope", scope)
-															.build();
+		public int getResponseCode(String Authorization) {
 			Request request = new Request.Builder()
-				      .url(url+"/Token")
-				      .post(body)
+				      .url(url+"/api/Users")
+				      .header("Accept", "application/json")
+				      .header("Authorization", Authorization)
 				      .build();
 			try {
 				Response response = client.newCall(request).execute();
-				if (!response.isSuccessful())
-					return null;
-				Token token = gson.fromJson(response.body().charStream(), Token.class);
-				str="bearer "+token.access_token;
-				savetoken.WriteStringToFile(str);
+				return response.code();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			return str;
+			return 0;
 		}
+	
+	//获取Token的函数，返回Token的字符串
+	public String getToken(String username,String password,String grant_type,String scope) {
+		String str="",file="";
+		SaveToken savetoken = new SaveToken();
+		final Gson gson = new Gson();
+		 RequestBody body = new FormBody.Builder()
+														.add("username", username)
+														.add("password", password)
+														.add("grant_type", grant_type)
+														.add("scope", scope)
+														.build();
+		Request request = new Request.Builder()
+			      .url(url+"/Token")
+			      .post(body)
+			      .build();
+		try {
+			Response response = client.newCall(request).execute();
+			if (!response.isSuccessful()) {
+				savetoken.WriteStringToFile("{'username':'233','password':'233','token':'233'}");
+				return null;
+			}
+			Token token = gson.fromJson(response.body().charStream(), Token.class);
+			str="bearer "+token.access_token;
+			file  = "{'username':'"+username+"','password':'"+password+"','token':'"+str+"'}";
+			savetoken.WriteStringToFile(file);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return str;
 	}
 	
 	//获取坐标的函数，返回坐标MapPoints对象
@@ -78,7 +77,7 @@ public class GetInfo {
 		try {
 			Response response = client.newCall(request).execute();
 			if (!response.isSuccessful())
-				return null;
+				throw new IOException("Unexpected code " + response);
 			point = gson.fromJson(response.body().charStream(), Point.class);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -104,13 +103,13 @@ public class GetInfo {
 				return gson.toJson(trail.items);
 			}
 			else {
-				return "no data";
+				return "none";
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		return "no data";
+		return "none";
 	}
 
 

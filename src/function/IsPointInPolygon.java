@@ -1,4 +1,4 @@
-package lg0v0;
+package function;
 
 import info.Point;
 
@@ -8,10 +8,10 @@ public class IsPointInPolygon {
 	public String run(Point point) {
 		boolean flag=false;
 		Point []  points = new Point[4];
-		points[0] = new Point(113.146143,29.337);
-		points[1] = new Point(113.155575,29.337);
-		points[2] = new Point(113.155575,29.333552);
-		points[3] = new Point(113.146143,29.333552);
+		points[0] = new Point(113.143601,29.332122);
+		points[1] = new Point(113.150103,29.332983);
+		points[2] = new Point(113.151154,29.328269);
+		points[3] = new Point(113.144931,29.327913);
 		
 		for(int i = 0, l = points.length, j = l - 1; i < l; j = i, i++) {
 		      double sx = points[i].lng,

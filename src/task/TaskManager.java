@@ -17,7 +17,7 @@ public class TaskManager implements ServletContextListener {
 	        //定义定时器   
 	  timer = new Timer(true);    
 	  //3秒运行一次
-	  timer.schedule(new Task(),0,10000);   
+	  timer.schedule(new Task(),0,60000);   
 	 }   
 	 /**  
 	  * 在Web应用结束时停止任务  

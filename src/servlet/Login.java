@@ -6,22 +6,21 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
-import info.Point;
-import lg0v0.GetInfo;
-import lg0v0.IsPointInPolygon;
+import function.GetInfo;
 
 /**
- * Servlet implementation class map
+ * Servlet implementation class Login
  */
-@WebServlet(name = "map" , urlPatterns = {"/map"})
-public class Map extends HttpServlet {
+@WebServlet("/Login")
+public class Login extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        
     /**
      * @see HttpServlet#HttpServlet()
      */
-    public Map() {
+    public Login() {
         super();
         // TODO Auto-generated constructor stub
     }
@@ -31,28 +30,27 @@ public class Map extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		// TODO Auto-generated method stub
-		String type = request.getParameter("type");
-		String username="861842030027687",password="123456",grant_type="password",scope="single";
-		username = request.getParameter("username");
-		password = request.getParameter("password");
-		String result;
-		String Token;
+		final HttpSession session = request.getSession();
+		String username,password,grant_type="password",scope="single";
+		String token;
 		GetInfo getinfo = new GetInfo();
 		
-		if(type.equals("login")){
-			Token = getinfo.getToken(username, password, grant_type, scope);
-			Point point = getinfo.getPoint(username, Token);
-			IsPointInPolygon is = new IsPointInPolygon();
-			result = "{'result':'"+is.run(point)+"','lng':'"+point.lng+"','lat':'"+point.lat+"'}";
-			response.getWriter().print(result);
+		username = request.getParameter("username");
+		password = request.getParameter("password");
+		
+		token = getinfo.getToken(username, password, grant_type, scope);
+		
+		if(token==null) {
+			response.getWriter().print("no");
 		}
 		else {
-			Token = getinfo.getToken(username, password, grant_type, scope);
-			result = getinfo.getTrail(username, Token, "2017-08-25", "2017-09-25");
-			response.getWriter().print(result);
+			session.setAttribute("username", username);
+			session.setAttribute("password", password);
+			session.setAttribute("grant_type", grant_type);
+			session.setAttribute("scope", scope);
+			session.setAttribute("token", token);
+			response.getWriter().print("yes");
 		}
-		
-		
 	}
 
 	/**

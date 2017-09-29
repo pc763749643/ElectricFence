@@ -1,4 +1,4 @@
-package lg0v0;
+package function;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
